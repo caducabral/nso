@@ -89,7 +89,7 @@ public class Kernel {
     * 
     */
     private void lerArquivo() {
-//        try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/" + this.boot)))) {
+        //try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(this.boot)))) {
     try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(this.boot))))) {
             this.gerenteProcesso.setProcessos(
                     br.lines().map(this.gerenteProcesso.mapearItens).collect(Collectors.toList())
@@ -173,6 +173,16 @@ public class Kernel {
                     this.CPU.processar(this.gerenteProcesso.getProcesso());
                     this.output.mostrar(0, "Instrução: " + count);
                     count++;
+                    if (this.gerenteProcesso.getProcesso().getPrioridade() > 0) {
+                        Processo pTmp = this.gerenteProcesso.verificarProximo();
+                        if (pTmp != null) {
+                            if(this.gerenteProcesso.getProcesso().getPrioridade() < pTmp.getPrioridade()) {
+                                this.gerenteProcesso.addFilaBloqueado(this.gerenteProcesso.getProcesso());
+                                this.gerenteProcesso.getProcesso().setProcessando(false);
+                            }
+                        }
+                    }
+                    
                 }
                 
                 this.output.mostrar(0, "return SIGINT \n");

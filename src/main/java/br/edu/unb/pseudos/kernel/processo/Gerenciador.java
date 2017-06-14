@@ -273,4 +273,24 @@ public class Gerenciador {
         }
     }
     
+    /**
+    *  Métodos para definir o proximo processo pronto.
+    * 
+     * @return retorna proximo processo que quer utilizar a CPu
+    */
+    public Processo verificarProximo() {
+        if (this.prontosTR.size() > 0 ) {
+            return this.prontosTR.get(0);
+        }else if (this.prioridade1.size() > 0 ) {
+            return this.prioridade1.get(0);
+        } else if (this.prioridade2.size() > 0 ) {
+            return this.prioridade2.get(0);
+        } else if (this.prioridade3.size() > 0 ) {
+            return this.prioridade3.get(0);
+        } else {
+            return null;
+        } 
+        
+    }
+    
 }
