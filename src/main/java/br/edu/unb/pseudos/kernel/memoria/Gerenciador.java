@@ -1,16 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.edu.unb.pseudos.kernel.memoria;
 
 import br.edu.unb.pseudos.kernel.processo.Processo;
 
-/**
- *
- * @author Cadu
- */
 public class Gerenciador {
     private final Integer T_TEMPO_REAL = 0;
     private final Integer T_USUARIO = 1;
@@ -23,15 +14,24 @@ public class Gerenciador {
         this.tempoReal = new Memoria(T_USUARIO, tamTr);
     }
     
+    /**
+    * Método para verificar se há espaço na memoria de acordo com prioridade do Processo.
+    * 
+     * @param p Processo que será verificado 
+     * @return True se há espaco na memoria ou False se não há espaco na memoria.
+    */
     public Boolean verificarMemoria(Processo p) {
         if (p.getPrioridade() == 0 ) {
-            return this.tempoReal.getMaiorEspaco() <= p.getBlocosMemoria();
+            return this.tempoReal.getMaiorEspaco() >= p.getBlocosMemoria();
         } else {
-            return this.usuario.getMaiorEspaco() <= p.getBlocosMemoria();
+            return this.usuario.getMaiorEspaco() >= p.getBlocosMemoria();
         }
     }
-    
-    
+
+    /**
+    * Método para varrer memoria e atualizar qual o tamanho maximo que cabe na memoria.
+    * 
+    */
     private void atualizarMaximo() {
        int count = 0;
        int max = 0;
@@ -68,6 +68,11 @@ public class Gerenciador {
        this.usuario.setOffset(offset);
     }
     
+    /**
+    * Método para liberar memoria de acordo com o tipo do processo (TR ou Usuario)
+    * 
+     * @param p Processo que será liberado em memoria
+    */
     public void liberarMemoria(Processo p) {
         if (p.getPrioridade() == 0) {
             for (int i = p.getOffset(); i < p.getBlocosMemoria() + p.getOffset(); i++) {
@@ -83,6 +88,11 @@ public class Gerenciador {
         this.atualizarMaximo();
     }
     
+    /**
+    * Método para alocar memoria de acordo com o tipo do processo (TR ou Usuario)
+    * 
+     * @param p Processo que será alocado em memoria
+    */
     public void alocarMemoria(Processo p) {
         if (p.getPrioridade() == 0) {
             for (int i = this.tempoReal.getOffset(); i < p.getBlocosMemoria() + this.tempoReal.getOffset(); i++) {

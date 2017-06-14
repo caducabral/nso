@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.edu.unb.pseudos.kernel;
 
 import java.util.ArrayList;
@@ -10,10 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- *
- * @author Cadu
- */
 public class Output {
     private static final String INFO = ">> [INFO] ";
     private static final String ERRO = ">> [ERRO] ";
@@ -24,7 +15,11 @@ public class Output {
     private static final Integer qtdTipo = 6;
     
     private List<Integer> chamadas;
-            
+           
+    /**
+    *  Metodo construtor da tela de saida do projeto
+    * 
+    */
     public Output() {
         this.chamadas = new ArrayList<>(Arrays.asList(new Integer[this.qtdTipo]));
         Collections.fill(this.chamadas, 0);
@@ -46,7 +41,10 @@ public class Output {
         System.out.println(this.getTipo(tipo) + msg);
     }
     
-    
+    /**
+    *  Obtem tipo de mensagem da Telas
+    * 
+    */
     private String getTipo(Integer tipo){
         switch (tipo) {
             case 0: 
@@ -73,6 +71,10 @@ public class Output {
         }
     }
     
+    /**
+    *  Obtem estatisticas da execucao do projeto
+    * 
+    */
     public void getEstatisticas() {
         
         this.mostrar(0, Output.SISTEMA + this.chamadas.get(2));
@@ -80,8 +82,4 @@ public class Output {
         this.mostrar(0, Output.ATENCAO + this.chamadas.get(4));
         this.mostrar(0, Output.ERRO + this.chamadas.get(5));
     }
-    
-//    for(int i = 0 ; i < kernel.getGerenciaProcesso().getProcessos().size(); i++){
-//                Output.normal(kernel.getGerenciaProcesso().getProcessos().get(i).getTempoInicializacao().toString());
-//            };
 }

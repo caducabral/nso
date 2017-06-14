@@ -1,21 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.edu.unb.pseudos.kernel;
 
 import br.edu.unb.pseudos.kernel.processo.Processo;
 
-/**
- *
- * @author Cadu
- */
 public class Processador {
     private Integer clock;
     private Boolean ocupado;
     private Integer inicio;
 
+    /**
+    * Método construtor do Processador.
+    * 
+    */
     public Processador() {
         this.clock = 1;
         this.ocupado = false;
@@ -26,6 +21,11 @@ public class Processador {
         return this.clock;
     }
     
+    /**
+    * Método para processar instruçoes do Processo. 
+    * 
+     * @param p Processo que será processado
+    */
     public void processar (Processo p) {
         this.iterar();
         if (p.getTempoProcessador() <= (this.clock - this.inicio) ) {
@@ -41,10 +41,18 @@ public class Processador {
         this.ocupado = ocupado;
     }
     
+    /**
+    * Método para marcar o inicio do processamento do processo.
+    * 
+    */
     public void setInicioProcessamento() {
         this.inicio = this.clock;
     }
     
+    /**
+    * Método para contar incrementar o clock do processador.
+    * 
+    */
     public void iterar() {
         this.clock++;
     }

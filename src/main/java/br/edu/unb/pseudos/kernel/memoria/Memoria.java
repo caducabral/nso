@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.edu.unb.pseudos.kernel.memoria;
 
 import java.util.ArrayList;
@@ -10,10 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- *
- * @author Cadu
- */
 public class Memoria {
     private final Integer TIPO;
     private final Integer TAMANHO;
@@ -34,6 +25,10 @@ public class Memoria {
         Collections.fill(this.blocos, 0);
     }
 
+    public Integer getTAMANHO() {
+        return TAMANHO;
+    }
+    
     public Integer getMaiorEspaco() {
         return maiorEspaco;
     }
@@ -65,4 +60,5 @@ public class Memoria {
     public void atualizarOffset(Integer tamAlocacao) {
         this.offset = this.offset - tamAlocacao;
     }
+    
 }

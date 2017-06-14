@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.edu.unb.pseudos;
 
 import br.edu.unb.pseudos.kernel.Kernel;
@@ -28,7 +23,13 @@ public class App {
         Integer SATA = 2;
         Integer IMPRESSORA = 2;
         Integer MAX_PROCESSOS = 1000;
-        String arquivo = "processos2.txt";
+        String arquivo = "/processos2.txt";
+        if (args.length > 0) {
+            arquivo = args[0];
+        } else {
+            output.mostrar(2, "ARQUIVO DEFAULT SERÁ UTILIZADO");
+        }
+            
 
         output.mostrar(2, "INFORMAÇÕES DE HARDWARE");
         output.mostrar(2, "Numero de processadores: " + PROCESSADOR.toString() );
@@ -74,16 +75,6 @@ public class App {
         output.mostrar(1, "");
         
         output.mostrar(3, "Obrigado por usar o PSEUDO.OS v1.0");
-        //TODO: Inicializar o Kernel;
-        
-        
-        
-        
-        
-        //TODO Iniciar a memoria;
-        //TODO iniciar os recursos;
-        //TODO Ler o Arquivo de Entrada;
-        //
         
     }
     

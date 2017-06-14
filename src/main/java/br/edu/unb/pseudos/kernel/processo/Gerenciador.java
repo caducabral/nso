@@ -1,20 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.edu.unb.pseudos.kernel.processo;
 
-import br.edu.unb.pseudos.kernel.Processador;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-/**
- *
- * @author Cadu
- */
 public class Gerenciador {
     private final Integer MAX_PID;
     private Integer pid;
@@ -25,13 +15,15 @@ public class Gerenciador {
     private List<Processo> prioridade2; 
     private List<Processo> prioridade3; 
     
-    private Processador CPU;
     private Processo processo; 
     
     private Boolean fim;
     
-//    private List<Integer> PIDlivres;
-    
+    /**
+    * Método Construtor do gerenciador de Processo.
+    * 
+     * @param maxProcessos numero maximo de processos que podem ser criados
+    */
     public Gerenciador(Integer maxProcessos) {
         this.MAX_PID = maxProcessos;
         this.pid = 0;
@@ -42,10 +34,6 @@ public class Gerenciador {
         this.prioridade2 = new ArrayList<>(); 
         this.prioridade3 = new ArrayList<>();
         this.fim = false;
-        
-//        this.PIDlivres = Arrays.asList(new Integer[this.MAX_PID]);
-//        Collections.fill(this.PIDlivres, 0);
-        //this.inicializarFilaPID();
     }
 
     public List<Processo> getProcessos() {
@@ -104,10 +92,6 @@ public class Gerenciador {
     public void setPid(Integer pid) {
         this.pid = pid;
     }
-    
-    public void setCPU(Processador cpu) {
-        this.CPU = cpu;
-    }
 
     public Boolean getFim() {
         return fim;
@@ -129,34 +113,22 @@ public class Gerenciador {
         this.processo = processo;
     }
     
-    
-    
+    /**
+    * Retorna um ID para o Processo.
+    * 
+    * @return Integer numero do PID
+    */
     private Integer criarPID(){
-//        Integer pid = -1;
-//        do {
-//            pid = ThreadLocalRandom.current().nextInt(0, this.MAX_PID + 1);
-//        } while (verificarPIDOcupado(pid));
-//        
-//        return pid;
-        this.setPid(this.getPid() + 1);
-        return  this.getPid();
+        return this.pid++;
     }
     
-//    private Boolean verificarPIDOcupado(Integer pid) {
-//        Boolean ocupado = true;
-//        if ( this.PIDlivres.get(pid) == 0 ) {
-//            ocupado = false;
-//        }
-//        return ocupado;
-//    }
-    
-    private void inicializarFilaPID() {
-        
-    }
-    
+    /**
+    *  Transforma o item do arquivo em um objeto Processo
+    * 
+    */
     public Function<String, Processo> mapearItens = (String line) -> {
         String[] pTemp = line.split(",");// a CSV has comma separated lines
-        Processo processo = criarProcesso();
+        Processo p = criarProcesso();
         if (pTemp[0] != null && pTemp[0].trim().length() > 0 
                 || pTemp[0] != null && pTemp[0].trim().length() > 0
                 || pTemp[0] != null && pTemp[0].trim().length() > 0
@@ -165,38 +137,43 @@ public class Gerenciador {
                 || pTemp[0] != null && pTemp[0].trim().length() > 0
                 || pTemp[0] != null && pTemp[0].trim().length() > 0
                 || pTemp[0] != null && pTemp[0].trim().length() > 0 ) {
-            processo.setTempoInicializacao(Integer.valueOf(pTemp[0].trim()));
-            processo.setPrioridade(Integer.valueOf(pTemp[1].trim()));
-            processo.setTempoProcessador(Integer.valueOf(pTemp[2].trim()));
-            processo.setBlocosMemoria(Integer.valueOf(pTemp[3].trim()));
-            processo.setImpressora(Integer.valueOf(pTemp[4].trim()));
-            processo.setScanner(Integer.valueOf(pTemp[5].trim()));
-            processo.setModem(Integer.valueOf(pTemp[6].trim()));
-            processo.setSata(Integer.valueOf(pTemp[7].trim()));
+            p.setTempoInicializacao(Integer.valueOf(pTemp[0].trim()));
+            p.setPrioridade(Integer.valueOf(pTemp[1].trim()));
+            p.setTempoProcessador(Integer.valueOf(pTemp[2].trim()));
+            p.setBlocosMemoria(Integer.valueOf(pTemp[3].trim()));
+            p.setImpressora(Integer.valueOf(pTemp[4].trim()));
+            p.setScanner(Integer.valueOf(pTemp[5].trim()));
+            p.setModem(Integer.valueOf(pTemp[6].trim()));
+            p.setSata(Integer.valueOf(pTemp[7].trim()));
         }
-//        else {
-//            atencao("PROCESSO " + this.getPid() + " MAL FORMADO: ESTE PROCESSO SERA IGNORADO");
-//        }
-        
-        return processo;
+        return p;
     };
     
+    /**
+    *  Ordena lista de processos que foram lidos do arquivo
+    * 
+    */
     public void ordenarEspera() {
         Collections.sort(this.processos, (Processo p1, Processo p2) -> p1.getTempoInicializacao().compareTo(p2.getTempoInicializacao()));
     }
     
+    /**
+    *  Obtem proximo processo da lista de processos lidos do arquivo
+    * 
+    */
     public void escalonarEspera() {
         this.processo = null;
         if(this.processos.size() > 0) {
             this.processo = this.processos.get(0);
             this.processos.remove(this.processo);
-//            if(this.processo.getTempoInicializacao() <= this.CPU.getClock()) {
-//                this.addFilaBloqueado();
-//                this.processo = null;
-//            }
         }
     }
     
+    /**
+    *  Adiciona processo para a sua respectiva fila de processo.
+    * 
+     * @param p processo a ser distribuido
+    */
     public void addFilaPronto(Processo p){
         switch (p.getPrioridade()){
             case 0:
@@ -213,6 +190,10 @@ public class Gerenciador {
         }
     }
     
+    /**
+    *  Adiciona processo para a sua respectiva fila de processo.
+    * 
+    */
     public void addFilaPronto(){
         switch (this.processo.getPrioridade()){
             case 0:
@@ -237,41 +218,26 @@ public class Gerenciador {
         this.bloqueados.add(this.processo);
     }
     
-    public void escalonarPronto() {
-//        for (Iterator<Processo> iter = this.processos.listIterator(); iter.hasNext(); ) {
-//            Processo p = iter.next();
-//            if (p.getPrioridade() == 0) {
-//                this.processosTR.add(p);
-//                iter.remove();
-//            }
-//        }
-        //TODO subdividir por prioridade
-    }
-    
-    public void iniciar(){
-//        this.fim = false;
-//        while (!fim) {
-//            this.escalonar();
-//            if (this.pronto == null) {
-//                fim = true;
-//            } else {
-//                this.CPU.processar(this.pronto);
-//            }
-//        }
-    }
-    
+    /**
+    *  Atualiza idade dos processos.
+    * 
+    */
     public void atualizarPiroridade() {
         for (int i = 0; i < this.prioridade3.size(); i++) {
             this.prioridade3.get(i).envelhecer();
         }
         for (int i = 0; i < this.prioridade2.size(); i++) {
-            this.prioridade3.get(i).envelhecer();
+            this.prioridade2.get(i).envelhecer();
         }
         for (int i = 0; i < this.prioridade1.size(); i++) {
-            this.prioridade3.get(i).envelhecer();
+            this.prioridade1.get(i).envelhecer();
         }
     }
     
+    /**
+    *  Ordena por idade dos processos.
+    * 
+    */
     public void escalonarProntos() {
         this.atualizarPiroridade();
         
@@ -286,23 +252,10 @@ public class Gerenciador {
         }
     }
     
-//    public void escalonarBloqueados() {
-//        for (Processo p : this.bloqueados) {
-//            if (this.gerenteRecurso.verificarRecursos(this.gerenteProcesso.getProcesso()) 
-//                && this.gerenteMemoria.verificarMemoria(this.gerenteProcesso.getProcesso())
-//                    && this.gerenteProcesso.getProcesso().getTempoInicializacao() < this.CPU.getClock()) {
-//                this.gerenteProcesso.addFilaPronto();
-//            }
-//        }
-//        if (this.gerenteRecurso.verificarRecursos(this.gerenteProcesso.getProcesso()) 
-//                && this.gerenteMemoria.verificarMemoria(this.gerenteProcesso.getProcesso())
-//                && this.gerenteProcesso.getProcesso().getTempoInicializacao() < this.CPU.getClock()) {
-//            this.gerenteProcesso.addFilaPronto();
-//        } else {
-//            this.gerenteProcesso.addFilaBloqueado();
-//        }
-//    }
-    
+    /**
+    *  Métodos para definir o proximo processo pronto.
+    * 
+    */
     public void obterProximo() {
         this.processo = null;
         if (this.prontosTR.size() > 0 ) {

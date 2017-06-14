@@ -1,24 +1,23 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.edu.unb.pseudos.kernel.recurso;
 
 import br.edu.unb.pseudos.kernel.processo.Processo;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Cadu
- */
 public class Gerenciador {
     private List<Scanner> scanners;
     private List<Impressora> impressoras;
     private List<Modem> modems;
     private List<Sata> satas;
 
+    /**
+    *  Método construtor do Gerenciador de Recursos.
+    * 
+     * @param scanners numero de scanners usadas
+     * @param impressoras numero de impressoras usadas
+     * @param sata numero de satas usadas
+     * @param modems numero de modems usadas
+    */
     public Gerenciador(int scanners, int impressoras, int modems, int sata) {
         this.inicializarImpressoras(scanners);
         this.inicializarScanners(impressoras);
@@ -26,6 +25,11 @@ public class Gerenciador {
         this.inicializarSatas(sata);
     }
     
+    /**
+    *  Método para inicializar as impressoras.
+    * 
+     * @param qtd quantidade de recursos
+    */
     private void inicializarImpressoras(int qtd) {
         this.impressoras = new ArrayList<>();
         for (int i = 0; i < qtd; i++) {
@@ -33,6 +37,11 @@ public class Gerenciador {
         }
     }
     
+    /**
+    *  Método para inicializar as Scanners.
+    * 
+     * @param qtd quantidade de recursos
+    */
     private void inicializarScanners(int qtd) {
         this.scanners = new ArrayList<>();
         for (int i = 0; i < qtd; i++) {
@@ -40,6 +49,11 @@ public class Gerenciador {
         }
     }
     
+    /**
+    *  Método para inicializar os Modems.
+    * 
+     * @param qtd quantidade de recursos
+    */
     private void inicializarModems(int qtd) {
         this.modems = new ArrayList<>();
         for (int i = 0; i < qtd; i++) {
@@ -47,6 +61,11 @@ public class Gerenciador {
         }
     }
     
+    /**
+    *  Método para inicializar as satas.
+    * 
+     * @param qtd quantidade de recursos
+    */
     private void inicializarSatas(int qtd) {
         this.satas = new ArrayList<>();
         for (int i = 0; i < qtd; i++) {
@@ -54,7 +73,12 @@ public class Gerenciador {
         }
     }
     
-    
+    /**
+    *  Método para verificar se os recursos estão livres caso o processo precisa.
+    * 
+     * @param p processo que será verificado
+     * @return True se tem recurso. False se nao
+    */
     public Boolean verificarRecursos(Processo p){
         Boolean impressora = true;
         Boolean scanner = true;
@@ -80,6 +104,11 @@ public class Gerenciador {
         return impressora && scanner && modem && sata;
     }
     
+    /**
+    *  Método para verificar se as impressoras estao livres.
+    * 
+    * @return True se estiver livre. False se estiver ocupado
+    */
     private Boolean verificarImpressora() {
         for(Impressora i : this.impressoras) {
             if(i.getLivre()) {
@@ -89,6 +118,10 @@ public class Gerenciador {
         return false;
     }
     
+    /**
+    *  Método para alocar se as impressoras estiverem livres.
+    * 
+    */
     private void alocarImpressora() {
         for(Impressora i : this.impressoras) {
             if(i.getLivre()) {
@@ -98,6 +131,10 @@ public class Gerenciador {
         }
     }
     
+    /**
+    *  Método para liberar as impressoras que estavam ocupadas.
+    * 
+    */
     private void liberarImpressora() {
         for(Impressora i : this.impressoras) {
             if(!i.getLivre()) {
@@ -107,6 +144,11 @@ public class Gerenciador {
         }
     }
     
+    /**
+    *  Método para verificar se as scanners estao livres.
+    * 
+    * @return True se estiver livre. False se estiver ocupado
+    */
     private Boolean verificarScanner() {
         for(Scanner i : this.scanners) {
             if(i.getLivre()) {
@@ -116,6 +158,10 @@ public class Gerenciador {
         return false;
     }
     
+    /**
+    *  Método para alocar se as scanners estiverem livres.
+    * 
+    */
     private void alocarScanner() {
         for(Scanner i : this.scanners) {
             if(i.getLivre()) {
@@ -125,6 +171,10 @@ public class Gerenciador {
         }
     }
     
+    /**
+    *  Método para liberar as scanners que estavam ocupadas.
+    * 
+    */
     private void liberarScanner() {
         for(Scanner i : this.scanners) {
             if(!i.getLivre()) {
@@ -134,6 +184,11 @@ public class Gerenciador {
         }
     }
     
+    /**
+    *  Método para verificar se as Satas estao livres.
+    * 
+    * @return True se estiver livre. False se estiver ocupado
+    */
     private Boolean verificarSata() {
         for(Sata i : this.satas) {
             if(i.getLivre()) {
@@ -143,6 +198,10 @@ public class Gerenciador {
         return false;
     }
     
+    /**
+    *  Método para alocar se as satas estiverem livres.
+    * 
+    */
     private void alocarSata() {
         for(Sata i : this.satas) {
             if(i.getLivre()) {
@@ -152,6 +211,10 @@ public class Gerenciador {
         }
     }
     
+    /**
+    *  Método para liberar as satas que estavam ocupadas.
+    * 
+    */
     private void liberarSata() {
         for(Sata i : this.satas) {
             if(!i.getLivre()) {
@@ -161,6 +224,11 @@ public class Gerenciador {
         }
     }
     
+    /**
+    *  Método para verificar se os Modems estao livres.
+    * 
+    * @return True se estiver livre. False se estiver ocupado
+    */
     private Boolean verificarModem() {
         for(Modem i : this.modems) {
             if(i.getLivre()) {
@@ -170,6 +238,10 @@ public class Gerenciador {
         return false;
     }
     
+    /**
+    *  Método para alocar se os modems estiverem livres.
+    * 
+    */
     private void alocarModem() {
         for(Modem i : this.modems) {
             if(i.getLivre()) {
@@ -179,6 +251,10 @@ public class Gerenciador {
         }
     }
     
+    /**
+    *  Método para liberar as modems que estavam ocupadas.
+    * 
+    */
     private void liberarModem() {
         for(Modem i : this.modems) {
             if(!i.getLivre()) {
@@ -188,7 +264,12 @@ public class Gerenciador {
         }
     }
     
-    
+    /**
+    *  Método para alocar os recursos do processo.
+    * 
+    * 
+     * @param p processo para alocar os recursos
+    */
     public void alocarRecursos(Processo p) {
         if(p.getImpressora()  > 0) {
             this.alocarImpressora();
@@ -204,6 +285,12 @@ public class Gerenciador {
         }
     }
     
+    /**
+    *  Método para liberar os recursos do processo.
+    * 
+    * 
+     * @param p processo para liberar os recursos
+    */
     public void liberarRecursos(Processo p) {
         if(p.getImpressora()  > 0) {
             this.liberarImpressora();

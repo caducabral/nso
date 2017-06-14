@@ -1,14 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.edu.unb.pseudos.kernel.processo;
 
-/**
- *
- * @author Cadu
- */
 public class Processo {
     private Integer id;
     private Integer tempoInicializacao;
@@ -25,9 +16,15 @@ public class Processo {
     private Integer aging;
     private Boolean processando;
 
+    /**
+    *  Método construtor do processo
+    * 
+     * @param id PID do processo
+    */
     public Processo(Integer id) {
         this.id = id;
         this.offset = 0;
+        this.aging = 0;
     }
     
     public Processo getProcesso() {
@@ -130,6 +127,10 @@ public class Processo {
         this.processando = processando;
     }
     
+    /**
+    *  Envelhece o processo
+    * 
+    */
     public void envelhecer() {
         this.aging++;
     }

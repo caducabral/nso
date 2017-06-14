@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.edu.unb.pseudos.kernel;
 
 import java.io.BufferedReader;
@@ -14,10 +9,6 @@ import java.util.stream.Collectors;
 import br.edu.unb.pseudos.kernel.processo.Gerenciador;
 import br.edu.unb.pseudos.kernel.processo.Processo;
 
-/**
- *
- * @author Cadu
- */
 public class Kernel {
     private final String boot;
     private Output output;
@@ -26,7 +17,11 @@ public class Kernel {
     private br.edu.unb.pseudos.kernel.memoria.Gerenciador gerenteMemoria;
     private br.edu.unb.pseudos.kernel.recurso.Gerenciador gerenteRecurso;
 
-    /* Construtor default */
+    /**
+    *  Costrutor default caso nao seja passado nenhum parametro alem do nome do arquivo.
+    * 
+     * @param arquivo caminho para o arquivo
+    */
     public Kernel(String arquivo) {
         this.output = new Output();
         this.CPU = new Processador();
@@ -62,8 +57,6 @@ public class Kernel {
         this.output.mostrar(2, "Gerenciador de Memória Iniciado com Sucesso! ");
         this.gerenteRecurso = new br.edu.unb.pseudos.kernel.recurso.Gerenciador(scanner, impressora, modem, sata);
         this.output.mostrar(2, "Gerenciador de Recursos Iniciado com Sucesso! ");
-        //this.processador = new Processador();
-        //this.output.mostrar(2, "Processador está disponível para uso! ");
         this.boot = arquivo;
     }
 
@@ -90,9 +83,14 @@ public class Kernel {
     public void setGerenteRecurso(br.edu.unb.pseudos.kernel.recurso.Gerenciador gerenteRecurso) {
         this.gerenteRecurso = gerenteRecurso;
     }
-
+    
+    /**
+    * Método para ler o arquivo deentrada e transforma-lo em uma lista de processos
+    * 
+    */
     private void lerArquivo() {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/" + this.boot)))) {
+//        try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/" + this.boot)))) {
+    try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(this.boot))))) {
             this.gerenteProcesso.setProcessos(
                     br.lines().map(this.gerenteProcesso.mapearItens).collect(Collectors.toList())
              );
@@ -102,32 +100,44 @@ public class Kernel {
         }
     }
     
+    /**
+    * Varre a lista de bloqueados e verifica qual está com os pre-requisitos para ir para a fila de pronto
+    * 
+    */
     private void escalonarBloqueados() {
         for (int i = 0; i < this.gerenteProcesso.getBloqueados().size(); i++) {
             Processo p = this.gerenteProcesso.getBloqueados().get(i);
-            if (this.gerenteRecurso.verificarRecursos(p)
+            if ( p.getPrioridade() == 0 && (p.getBlocosMemoria() > this.gerenteMemoria.getTempoReal().getTAMANHO())) {
+                this.gerenteProcesso.getBloqueados().remove(p);
+            } else if (p.getPrioridade() == 0 && (p.getBlocosMemoria() > this.gerenteMemoria.getTempoReal().getTAMANHO())) {
+                this.gerenteProcesso.getBloqueados().remove(p);
+                this.output.mostrar(5, "PROCESSO " + p.getId() + "CANCELADO POR FALTA DE MEMORIA");
+            } else {
+                if (this.gerenteRecurso.verificarRecursos(p)
                     && this.gerenteMemoria.verificarMemoria(p)
                     && p.getTempoInicializacao() < this.CPU.getClock()) {
-                this.gerenteProcesso.addFilaPronto(p);
-                this.gerenteProcesso.getBloqueados().remove(p);
-                break;
+                    this.gerenteProcesso.addFilaPronto(p);
+                    this.gerenteProcesso.getBloqueados().remove(p);
+                    break;
+                }
             }
+            
         }
     }
 
+    /**
+    * Métodos que inicializa o kernel e roda a logica do programa
+    * 
+    */
     public void start() {
         this.lerArquivo();
         this.output.mostrar(1, "");
         this.output.mostrar(3, "INICIANDO PROCESSAMENTO");
         this.output.mostrar(1, "");
         
-        this.gerenteProcesso.setCPU(this.CPU);
-        
-        //ORDENA PELO TEMPO INICIALIZACAO
         this.gerenteProcesso.ordenarEspera();
         
         for(int i = 0; i < this.gerenteProcesso.getProcessos().size(); i++){
-//            this.gerenteProcesso.escalonarEspera();
             Processo p = this.gerenteProcesso.getProcessos().get(i);
             if (this.gerenteRecurso.verificarRecursos(p) 
                     && this.gerenteMemoria.verificarMemoria(p)
@@ -136,13 +146,13 @@ public class Kernel {
             } else {
                 this.gerenteProcesso.addFilaBloqueado(p);
             }
-//                this.gerenteProcesso.getProcessos().remove(this.gerenteProcesso.getProcesso());
         }
-        //ENQUANTO NAO FOR FIM
         while (!this.gerenteProcesso.getFim()) {
-            //if (!this.CPU.getOcupado()) {
             this.gerenteProcesso.obterProximo();
             if(this.gerenteProcesso.getProcesso() != null ) {
+                this.gerenteRecurso.alocarRecursos(this.gerenteProcesso.getProcesso());
+                this.gerenteMemoria.alocarMemoria(this.gerenteProcesso.getProcesso());
+                
                 this.output.mostrar(0, "dispatcher => \n" + 
                     "PID: " + String.valueOf(this.gerenteProcesso.getProcesso().getId()) + "\n" +
                     "offset: " + String.valueOf(this.gerenteProcesso.getProcesso().getOffset()) + "\n" +
@@ -152,10 +162,9 @@ public class Kernel {
                     "printers: " + String.valueOf(this.gerenteProcesso.getProcesso().getImpressora()) + "\n" +
                     "scanners: " + String.valueOf(this.gerenteProcesso.getProcesso().getScanner()) + "\n" +
                     "modems: " + String.valueOf(this.gerenteProcesso.getProcesso().getModem()) + "\n" +
-                    "drives: " + String.valueOf(this.gerenteProcesso.getProcesso().getSata()) + "\n"
+                    "drives: " + String.valueOf(this.gerenteProcesso.getProcesso().getSata())
                 );
-                this.gerenteRecurso.alocarRecursos(this.gerenteProcesso.getProcesso());
-                this.gerenteMemoria.alocarMemoria(this.gerenteProcesso.getProcesso());
+                
                 this.gerenteProcesso.getProcesso().setProcessando(true);
                 this.CPU.setInicioProcessamento();
 
@@ -165,6 +174,8 @@ public class Kernel {
                     this.output.mostrar(0, "Instrução: " + count);
                     count++;
                 }
+                
+                this.output.mostrar(0, "return SIGINT \n");
 
                 this.gerenteMemoria.liberarMemoria(this.gerenteProcesso.getProcesso());
                 this.gerenteRecurso.liberarRecursos(this.gerenteProcesso.getProcesso());
@@ -176,19 +187,6 @@ public class Kernel {
             } else {
                 this.gerenteProcesso.setFim(Boolean.TRUE);
             }
-                
-                
-            //}
-            /*****
-                //AQUI DEVE VERIFICAR SE O PROCESSO É DE TEMPO REAL OU NAO PARA PODER HAVER PREEMPÇAO
-            ******/
-                      
-//            if((this.CPU.getFim() < this.CPU.getClock())) {
-//                this.gerenteMemoria.liberarMemoria(this.gerenteProcesso.getProcesso());
-//                this.gerenteRecurso.liberarRecursos(this.gerenteProcesso.getProcesso());
-//            }
-
-            
         }
         
         this.output.mostrar(1, "");
